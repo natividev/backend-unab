@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +5,65 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model usuario {
+  id              Int      @id @default(autoincrement())
+  nombres         String
+  apellido        String
+  email           String
+  password        String
+  codigo_empleado String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+}
+
+model marca {
+  id             Int              @id @default(autoincrement())
+  nombre         String
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @updatedAt
+  equipo         equipo[]
+  especificacion especificacion[]
+}
+
+model equipo {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  marca       marca    @relation(fields: [marca_id], references: [id])
+  marca_id    Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  ubicacionId Int?
+}
+
+model ubicacion {
+  id          Int      @id @default(autoincrement())
+  cede_nombre String
+  edificio    String
+  nivel       String
+  area        String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model especificacion {
+  id          Int      @id @default(autoincrement())
+  descripcion String
+  modelo      String
+  serie       String
+  dimeciones  String?
+  activo_fijo String?
+  dimensiones String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  marca       marca?   @relation(fields: [marcaId], references: [id])
+  marcaId     Int?
+}
+
+model area {
+  id         Int      @id @default(autoincrement())
+  nombre     String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
