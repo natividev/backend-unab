@@ -14,10 +14,8 @@ COPY . .
 
 ARG PORT
 ARG DATABASE_URL
-ARG API_KEY
 ENV PORT=$PORT
 ENV DATABASE_URL=$DATABASE_URL
-ENV API_KEY=$API_KEY
 
 # Ejecutar Prisma generate
 RUN npx prisma generate
@@ -41,10 +39,8 @@ COPY --from=builder /usr/src/app/prisma ./prisma
 
 ARG PORT
 ARG DATABASE_URL
-ARG API_KEY
 ENV PORT=$PORT
 ENV DATABASE_URL=$DATABASE_URL
-ENV API_KEY=$API_KEY
 
 RUN npm ci --production
 
