@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -11,9 +11,9 @@ model usuario {
   id                       Int                        @id @default(autoincrement())
   nombres                  String
   apellido                 String
-  email                    String
+  email                    String                     @unique
   password                 String
-  codigo_empleado          String
+  codigo_empleado          String                     @unique
   created_at               DateTime                   @default(now())
   updated_at               DateTime                   @updatedAt
   tipos_equipos_inventario tipos_equipos_inventario[]
@@ -21,7 +21,7 @@ model usuario {
 
 model marca {
   id             Int              @id @default(autoincrement())
-  nombre         String
+  nombre         String           @unique
   created_at     DateTime         @default(now())
   updated_at     DateTime         @updatedAt
   equipo         equipo[]
@@ -54,9 +54,8 @@ model especificacion {
   descripcion String
   modelo      String
   serie       String
-  dimeciones  String?
-  activo_fijo String?
   dimensiones String?
+  activo_fijo Boolean?
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
   marca       marca?   @relation(fields: [marcaId], references: [id])
@@ -71,7 +70,7 @@ model area {
 }
 
 enum estado_equipo {
-  ASGINADO
+  ASIGNADO
   DESCARTE
   BODEGA
 }
@@ -82,7 +81,7 @@ model tipos_equipos_inventario {
   equipo_id        Int
   especificaciones String
   direccion_ip     String
-  estado           estado_equipo
+  estado           estado_equipo @default(ASIGNADO)
   administrativo   Boolean       @default(false)
   email            String?
   usuario          usuario?      @relation(fields: [usuario_id], references: [id])
