@@ -8,14 +8,15 @@ datasource db {
 }
 
 model usuario {
-  id              Int      @id @default(autoincrement())
-  nombres         String
-  apellido        String
-  email           String
-  password        String
-  codigo_empleado String
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  id                       Int                        @id @default(autoincrement())
+  nombres                  String
+  apellido                 String
+  email                    String
+  password                 String
+  codigo_empleado          String
+  created_at               DateTime                   @default(now())
+  updated_at               DateTime                   @updatedAt
+  tipos_equipos_inventario tipos_equipos_inventario[]
 }
 
 model marca {
@@ -28,13 +29,14 @@ model marca {
 }
 
 model equipo {
-  id          Int      @id @default(autoincrement())
-  nombre      String
-  marca       marca    @relation(fields: [marca_id], references: [id])
-  marca_id    Int
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  ubicacionId Int?
+  id                       Int                        @id @default(autoincrement())
+  nombre                   String
+  marca                    marca                      @relation(fields: [marca_id], references: [id])
+  marca_id                 Int
+  created_at               DateTime                   @default(now())
+  updated_at               DateTime                   @updatedAt
+  ubicacionId              Int?
+  tipos_equipos_inventario tipos_equipos_inventario[]
 }
 
 model ubicacion {
@@ -66,4 +68,25 @@ model area {
   nombre     String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+}
+
+enum estado_equipo {
+  ASGINADO
+  DESCARTE
+  BODEGA
+}
+
+model tipos_equipos_inventario {
+  id               Int           @id @default(autoincrement())
+  equipo           equipo?       @relation(fields: [equipo_id], references: [id])
+  equipo_id        Int
+  especificaciones String
+  direccion_ip     String
+  estado           estado_equipo
+  administrativo   Boolean       @default(false)
+  email            String?
+  usuario          usuario?      @relation(fields: [usuario_id], references: [id])
+  usuario_id       Int?
+  created_at       DateTime      @default(now())
+  updated_at       DateTime      @updatedAt
 }
