@@ -7,25 +7,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model usuario {
+model empleados {
   id                       Int                        @id @default(autoincrement())
-  nombres                  String
+  nombre                   String
   apellido                 String
-  email                    String                     @unique
-  password                 String
-  codigo_empleado          String                     @unique
+  email                    String?
+  numero_telefono          String                     @unique
   created_at               DateTime                   @default(now())
   updated_at               DateTime                   @updatedAt
+  especificaciones         especificacion[]
   tipos_equipos_inventario tipos_equipos_inventario[]
 }
 
+model usuario {
+  id                     Int                        @id @default(autoincrement())
+  nombres                String
+  apellido               String
+  email                  String                     @unique
+  password               String
+  created_at             DateTime                   @default(now())
+  updated_at             DateTime                   @updatedAt
+  tiposEquiposInventario tipos_equipos_inventario[]
+  areas                  area[] // Relación con área
+}
+
 model marca {
-  id             Int              @id @default(autoincrement())
-  nombre         String           @unique
-  created_at     DateTime         @default(now())
-  updated_at     DateTime         @updatedAt
-  equipo         equipo[]
-  especificacion especificacion[]
+  id               Int              @id @default(autoincrement())
+  nombre           String           @unique
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @updatedAt
+  equipos          equipo[] // Relación con equipo
+  modelos          modelo[] // Relación con modelo
+  especificaciones especificacion[] // Relación con especificación
 }
 
 model equipo {
@@ -39,34 +52,62 @@ model equipo {
   tipos_equipos_inventario tipos_equipos_inventario[]
 }
 
-model ubicacion {
-  id          Int      @id @default(autoincrement())
-  cede_nombre String
-  edificio    String
-  nivel       String
-  area        String
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+model cede {
+  id                       Int                        @id @default(autoincrement()) // tabla padre
+  nombre                   String // San Miguel, San Salvador, Chalatenango, Sonsonate
+  created_at               DateTime                   @default(now())
+  updated_at               DateTime                   @updatedAt
+  edificios                edificio[]
+  tipos_equipos_inventario tipos_equipos_inventario[]
 }
 
-model especificacion {
-  id          Int      @id @default(autoincrement())
-  descripcion String
-  modelo      String
-  serie       String
-  dimensiones String?
-  activo_fijo Boolean?
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  marca       marca?   @relation(fields: [marcaId], references: [id])
-  marcaId     Int?
+model edificio {
+  id                       Int                        @id @default(autoincrement()) // tabla hijo de ubicación
+  nombre                   String // Edificio A, Edificio B, Edificio C
+  created_at               DateTime                   @default(now())
+  updated_at               DateTime                   @updatedAt
+  ubicaion_id              Int
+  cede                     cede?                      @relation(fields: [cedeId], references: [id])
+  cedeId                   Int?
+  tipos_equipos_inventario tipos_equipos_inventario[]
+}
+
+model nivel {
+  id                       Int                        @id @default(autoincrement()) // tabla hijo de ubicación
+  nombre                   String
+  created_at               DateTime                   @default(now())
+  updated_at               DateTime                   @updatedAt
+  areas                    area[]
+  tipos_equipos_inventario tipos_equipos_inventario[]
 }
 
 model area {
-  id         Int      @id @default(autoincrement())
-  nombre     String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id                       Int                        @id @default(autoincrement())
+  nombre                   String // Colectura, Coordinacion, centro de compuo
+  nivel                    nivel                      @relation(fields: [id_nivel], references: [id])
+  id_nivel                 Int
+  usuario                  usuario                    @relation(fields: [usuario_id], references: [id])
+  usuario_id               Int
+  created_at               DateTime                   @default(now())
+  updated_at               DateTime                   @updatedAt
+  tipos_equipos_inventario tipos_equipos_inventario[]
+}
+
+model especificacion {
+  id                       Int                        @id @default(autoincrement())
+  descripcion              String
+  modelo_id                Int
+  modelo                   modelo                     @relation(fields: [modelo_id], references: [id])
+  serie                    String
+  dimensiones              String?
+  activo_fijo              Boolean?                   @default(false)
+  created_at               DateTime                   @default(now())
+  updated_at               DateTime                   @updatedAt
+  marca                    marca?                     @relation(fields: [marcaId], references: [id])
+  marcaId                  Int?
+  empleados                empleados?                 @relation(fields: [empleadosId], references: [id])
+  empleadosId              Int?
+  tipos_equipos_inventario tipos_equipos_inventario[]
 }
 
 enum estado_equipo {
@@ -76,16 +117,42 @@ enum estado_equipo {
 }
 
 model tipos_equipos_inventario {
-  id               Int           @id @default(autoincrement())
-  equipo           equipo?       @relation(fields: [equipo_id], references: [id])
-  equipo_id        Int
-  especificaciones String
-  direccion_ip     String
-  estado           estado_equipo @default(ASIGNADO)
-  administrativo   Boolean       @default(false)
-  email            String?
-  usuario          usuario?      @relation(fields: [usuario_id], references: [id])
-  usuario_id       Int?
-  created_at       DateTime      @default(now())
-  updated_at       DateTime      @updatedAt
+  id                   Int             @id @default(autoincrement())
+  cede_id              Int?
+  edificio_id          Int?
+  nivel_id             Int?
+  area_id              Int?
+  equipo_id            Int?
+  especificacion_id    Int?
+  direccion_ip         String
+  estado               estado_equipo   @default(ASIGNADO)
+  administrativo       Boolean         @default(false)
+  academico            Boolean         @default(false)
+  empleado_id          Int?
+  usuario_id           Int?
+  fecha_ingreso_equipo DateTime        @default(now())
+  fecha_asignado       DateTime // el usuario pone la fecha de asignación null
+  fecha_descarte       DateTime? // el usuario pone la fecha de descarte null en el modulo de autorización se pondra la fecha
+  created_at           DateTime        @default(now())
+  updated_at           DateTime        @updatedAt
+  empleado             empleados?      @relation(fields: [empleado_id], references: [id])
+  usuario              usuario?        @relation(fields: [usuario_id], references: [id])
+  cede                 cede?           @relation(fields: [cede_id], references: [id])
+  especificacion       especificacion? @relation(fields: [especificacion_id], references: [id])
+  equipo               equipo?         @relation(fields: [equipo_id], references: [id])
+  edificio             edificio?       @relation(fields: [edificio_id], references: [id])
+  nivel                nivel?          @relation(fields: [nivel_id], references: [id])
+  area                 area?           @relation(fields: [area_id], references: [id])
+
+  @@map("tipos_equipos_inventario")
+}
+
+model modelo {
+  id             Int              @id @default(autoincrement())
+  nombre         String
+  marca          marca?           @relation(fields: [id_marca], references: [id])
+  id_marca       Int?
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @updatedAt
+  especificacion especificacion[]
 }
