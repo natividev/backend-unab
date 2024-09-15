@@ -51,7 +51,7 @@ model equipo {
   tipos_equipos_inventario tipos_equipos_inventario[]
 }
 
-model cede {
+model sede {
   id                       Int                        @id @default(autoincrement()) // tabla padre
   nombre                   String // San Miguel, San Salvador, Chalatenango, Sonsonate
   created_at               DateTime                   @default(now())
@@ -66,8 +66,8 @@ model edificio {
   created_at               DateTime                   @default(now())
   updated_at               DateTime                   @updatedAt
   //ubicaion_id              Int
-  cede                     cede?                      @relation(fields: [cedeId], references: [id])
-  cedeId                   Int?
+  sede                     sede?                      @relation(fields: [sedeId], references: [id])
+  sedeId                   Int?
   tipos_equipos_inventario tipos_equipos_inventario[]
 }
 
@@ -117,7 +117,7 @@ enum estado_equipo {
 
 model tipos_equipos_inventario {
   id                   Int             @id @default(autoincrement())
-  cede_id              Int?
+  sede_id              Int?
   edificio_id          Int?
   nivel_id             Int?
   area_id              Int?
@@ -136,7 +136,7 @@ model tipos_equipos_inventario {
   updated_at           DateTime        @updatedAt
   empleado             empleados?      @relation(fields: [empleado_id], references: [id])
   usuario              usuario?        @relation(fields: [usuario_id], references: [id])
-  cede                 cede?           @relation(fields: [cede_id], references: [id])
+  sede                 sede?           @relation(fields: [sede_id], references: [id])
   especificacion       especificacion? @relation(fields: [especificacion_id], references: [id])
   equipo               equipo?         @relation(fields: [equipo_id], references: [id])
   edificio             edificio?       @relation(fields: [edificio_id], references: [id])
