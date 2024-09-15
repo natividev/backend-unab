@@ -17,6 +17,7 @@ jobs:
       NODE_ENV: production
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       PORT: ${{ secrets.PORT }}
+
     steps:
       - uses: actions/checkout@v4
 

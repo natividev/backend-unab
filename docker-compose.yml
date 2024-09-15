@@ -1,16 +1,16 @@
-version: '3.8'
-
 services:
   app:
     container_name: backend-unab
     image: backend-unab
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: production
+        DATABASE_URL: ${DATABASE_URL}
+        PORT: ${PORT}
     ports:
-      - '3000:3000'
-    env_file:
-      - .env
+      - '${PORT}:${PORT}'
     volumes:
       - .:/usr/src/app
     restart: always
