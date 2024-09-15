@@ -28,7 +28,7 @@ model usuario {
   created_at             DateTime                   @default(now())
   updated_at             DateTime                   @updatedAt
   tiposEquiposInventario tipos_equipos_inventario[]
-  areas                  area[] // Relación con área
+  //areas                  area[] // Relación con área
 }
 
 model marca {
@@ -48,7 +48,6 @@ model equipo {
   marca_id                 Int
   created_at               DateTime                   @default(now())
   updated_at               DateTime                   @updatedAt
-  ubicacionId              Int?
   tipos_equipos_inventario tipos_equipos_inventario[]
 }
 
@@ -66,7 +65,7 @@ model edificio {
   nombre                   String // Edificio A, Edificio B, Edificio C
   created_at               DateTime                   @default(now())
   updated_at               DateTime                   @updatedAt
-  ubicaion_id              Int
+  //ubicaion_id              Int
   cede                     cede?                      @relation(fields: [cedeId], references: [id])
   cedeId                   Int?
   tipos_equipos_inventario tipos_equipos_inventario[]
@@ -86,8 +85,8 @@ model area {
   nombre                   String // Colectura, Coordinacion, centro de compuo
   nivel                    nivel                      @relation(fields: [id_nivel], references: [id])
   id_nivel                 Int
-  usuario                  usuario                    @relation(fields: [usuario_id], references: [id])
-  usuario_id               Int
+  //usuario                  usuario                    @relation(fields: [usuario_id], references: [id])
+  //usuario_id               Int
   created_at               DateTime                   @default(now())
   updated_at               DateTime                   @updatedAt
   tipos_equipos_inventario tipos_equipos_inventario[]
