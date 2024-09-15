@@ -44,10 +44,8 @@ ENV DATABASE_URL=$DATABASE_URL
 
 RUN npm ci --production
 
-RUN npm install -g pm2
-
 # Exponer el puerto de la aplicación
 EXPOSE $PORT
 
 # Comando para iniciar la aplicación
-CMD ["pm2-runtime", "dist/main.js"]
+CMD ["npm", "run", "start:prod"]
