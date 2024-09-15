@@ -23,6 +23,7 @@ async function bootstrap() {
     preflightContinue: false,
   });
   logger.log(`Server running on port ${envs.PORT}`);
+  app.setGlobalPrefix('api');
   await app.listen(envs.PORT);
 }
 bootstrap();

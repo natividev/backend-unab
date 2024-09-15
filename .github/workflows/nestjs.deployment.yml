@@ -1,0 +1,29 @@
+name: Node.js CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    strategy:
+      matrix:
+        node-version: [18.16.0]
+
+    env:
+      NODE_ENV: production
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      PORT: ${{ secrets.PORT }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stop existing container
+        run: |
+          docker compose down --rmi all
+
+      - name: Deploy Docker container
+        run: |
+          docker compose up --build -d
