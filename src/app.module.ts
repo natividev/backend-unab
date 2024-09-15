@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
+import { EmpleadosModule } from './modules/empleados/empleados.module';
 
 @Module({
-  imports: [],
+  imports: [EmpleadosModule],
   controllers: [],
   providers: [],
 })
