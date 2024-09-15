@@ -16,30 +16,30 @@ export class EdificioController {
   constructor(private readonly edificioService: EdificioService) {}
 
   @Post()
-  create(@Body() createEdificioDto: CreateEdificioDto) {
-    return this.edificioService.create(createEdificioDto);
+  async create(@Body() createEdificioDto: CreateEdificioDto) {
+    return await this.edificioService.create(createEdificioDto);
   }
 
   @Get()
-  findAll() {
-    return this.edificioService.findAll();
+  async findAll() {
+    return await this.edificioService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.edificioService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.edificioService.findOne(+id);
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateEdificioDto: UpdateEdificioDto,
   ) {
-    return this.edificioService.update(+id, updateEdificioDto);
+    return await this.edificioService.update(+id, updateEdificioDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.edificioService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.edificioService.remove(+id);
   }
 }
