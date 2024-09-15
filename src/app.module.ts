@@ -8,9 +8,10 @@ import { NivelModule } from './modules/nivel/nivel.module';
 import { AreaModule } from './modules/area/area.module';
 import { EspecificacionesModule } from './modules/especificaciones/especificaciones.module';
 import { ModeloModule } from './modules/modelo/modelo.module';
+import { InventarioModule } from './modules/inventario/inventario.module';
 
 @Module({
-  imports: [EmpleadosModule, MarcaModule, EquipoModule, SedeModule, EdificioModule, NivelModule, AreaModule, EspecificacionesModule, ModeloModule],
+  imports: [EmpleadosModule, MarcaModule, EquipoModule, SedeModule, EdificioModule, NivelModule, AreaModule, EspecificacionesModule, ModeloModule, InventarioModule],
   controllers: [],
   providers: [],
 })
