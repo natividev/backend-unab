@@ -1,47 +1,61 @@
-# Etapa 1: Construcción
+# Etapa de construcción
 FROM node:18.16.0-slim AS builder
 
-# Set working directory
+# Establecer el directorio de trabajo
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
+# Copiar los archivos de dependencias
 COPY package*.json ./
+COPY prisma ./prisma/
 
-# Install dependencies (including development dependencies)
-RUN apt-get update && apt-get install -y openssl
-RUN npm install
+# Instalar dependencias solo para la construcción
+RUN apt-get update && apt-get install -y \
+    python3 \
+    build-essential \
+    openssl \
+    && npm ci \
+    && apt-get purge -y --auto-remove python3 build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy the rest of the application code
+# Copiar el resto de los archivos del proyecto
 COPY . .
 
-# Generate Prisma Client code
+# Ejecutar Prisma generate
 RUN npx prisma generate
 
-# **Compila el código TypeScript para generar la carpeta dist**
+# Construir la aplicación
 RUN npm run build
 
-# Etapa 2: Producción
+# Etapa final
 FROM node:18.16.0-slim
 
-# Set working directory
+# Establecer el directorio de trabajo
 WORKDIR /usr/src/app
 
-# Copiar solo los archivos necesarios desde la etapa de construcción
+# Instalar OpenSSL
+RUN apt-get update && apt-get install -y openssl
+
+# Copiar los archivos necesarios desde la etapa de construcción
 COPY --from=builder /usr/src/app/package*.json ./
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/prisma ./prisma
+COPY --from=builder /usr/src/app/public ./public
 
-# Instala solo las dependencias de producción
-RUN npm install --only=production
-
-# Set environment variables
+# Definir argumentos de construcción
 ARG PORT
 ARG DATABASE_URL
+
+
+# Establecer variables de entorno
 ENV PORT=$PORT
 ENV DATABASE_URL=$DATABASE_URL
 
-# Expose the port
+
+# Instalar dependencias solo para producción
+RUN npm ci --production
+
+# Exponer el puerto de la aplicación
 EXPOSE $PORT
 
-# Command to run the app
-CMD ["node", "dist/main.js"]
+# Comando para iniciar la aplicación
+CMD ["npm", "run", "start:prod"]

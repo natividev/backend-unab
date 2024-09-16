@@ -44,4 +44,4 @@ ENV DATABASE_URL=$DATABASE_URL
 EXPOSE $PORT
 
 # Command to run the app
-CMD [ "node", "dist/main" ]
+CMD ["node", "dist/main.js"]
