@@ -20,9 +20,6 @@ RUN apt-get update && apt-get install -y \
 # Copiar el resto de los archivos del proyecto
 COPY . .
 
-# Ejecutar Prisma generate
-RUN npx prisma generate
-
 # Construir la aplicación
 RUN npm run build
 
@@ -51,7 +48,13 @@ ENV DATABASE_URL=$DATABASE_URL
 
 
 # Instalar dependencias solo para producción
-RUN npm ci --production
+RUN npm ci --
+
+#Ejecutamos las migraciones
+RUN npx prisma migrate deploy
+
+# Ejecutar Prisma generate
+RUN npx prisma generate
 
 # Exponer el puerto de la aplicación
 EXPOSE $PORT
