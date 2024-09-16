@@ -1,4 +1,4 @@
-FROM node:18.16.0-slim AS builder
+FROM node:18.16.0-slim
 
 # Set working directory
 WORKDIR /usr/src/app
@@ -8,25 +8,16 @@ COPY package*.json ./
 
 # Install dependencies
 RUN apt-get update && apt-get install -y openssl
-RUN npm cache clean --force
 RUN npm install
 
 # Copy the rest of the application code
 COPY . .
 
-# Build the project
+# Generate Prisma Client code
+RUN npx prisma generate
+
+# **Compila el código TypeScript para generar la carpeta dist**
 RUN npm run build
-
-# Create a new stage for the production image
-FROM node:18.16.0-slim
-
-# Set working directory
-WORKDIR /usr/src/app
-
-# Copy the build artifacts from the builder stage
-COPY --from=builder /usr/src/app/dist ./dist
-COPY package*.json ./
-RUN npm install --only=production
 
 # Set environment variables
 ARG PORT
@@ -34,8 +25,8 @@ ARG DATABASE_URL
 ENV PORT=$PORT
 ENV DATABASE_URL=$DATABASE_URL
 
-# Expose the port the app runs on
+# Expose the port
 EXPOSE $PORT
 
 # Command to run the app
-CMD ["npm", "run", "start:prod"]
+CMD [ "npm", "run", "start:prod" ]
