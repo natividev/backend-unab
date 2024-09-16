@@ -40,6 +40,9 @@ ARG DATABASE_URL
 ENV PORT=$PORT
 ENV DATABASE_URL=$DATABASE_URL
 
+# Run Prisma migrate
+RUN npx prisma migrate deploy
+
 # Expose the port
 EXPOSE $PORT
 
