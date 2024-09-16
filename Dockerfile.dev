@@ -1,4 +1,4 @@
-FROM node:18.16.0-slim
+FROM node:18.16.0-slim AS builder
 
 # Set working directory
 WORKDIR /usr/src/app
@@ -8,22 +8,34 @@ COPY package*.json ./
 
 # Install dependencies
 RUN apt-get update && apt-get install -y openssl
-
 RUN npm cache clean --force
+RUN npm install
 
 # Copy the rest of the application code
 COPY . .
 
-# Generate Prisma Client code
-RUN npx prisma generate
+# Build the project
+RUN npm run build
 
+# Create a new stage for the production image
+FROM node:18.16.0-slim
+
+# Set working directory
+WORKDIR /usr/src/app
+
+# Copy the build artifacts from the builder stage
+COPY --from=builder /usr/src/app/dist ./dist
+COPY package*.json ./
+RUN npm install --only=production
+
+# Set environment variables
 ARG PORT
 ARG DATABASE_URL
 ENV PORT=$PORT
 ENV DATABASE_URL=$DATABASE_URL
 
-# Expose the port the app runs on, here, I was using port 3333
+# Expose the port the app runs on
 EXPOSE $PORT
 
 # Command to run the app
-CMD [  "npm", "run", "start:prod" ]
+CMD ["npm", "run", "start:prod"]
