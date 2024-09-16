@@ -53,9 +53,6 @@ RUN npm ci --
 # Ejecutar Prisma generate
 RUN npx prisma generate
 
-# Run Prisma migrate
-RUN npx prisma migrate deploy
-
 # Exponer el puerto de la aplicación
 EXPOSE $PORT
 
