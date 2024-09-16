@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { envs } from 'config/envs';
+import { envs } from 'src/config/envs';
 
 async function bootstrap() {
   const logger = new Logger('Backend de UNAB');
