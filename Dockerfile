@@ -50,9 +50,6 @@ ENV DATABASE_URL=$DATABASE_URL
 # Instalar dependencias solo para producción
 RUN npm ci --
 
-#Ejecutamos las migraciones
-RUN npx prisma migrate deploy
-
 # Ejecutar Prisma generate
 RUN npx prisma generate
 

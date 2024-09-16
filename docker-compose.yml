@@ -1,5 +1,4 @@
 version: '3.8'
-
 services:
   app:
     container_name: backend-unab
@@ -13,26 +12,4 @@ services:
         PORT: ${PORT}
     ports:
       - '${PORT}:${PORT}'
-    depends_on:
-      - dev-db
-    networks:
-      - backend-unab-sm
     restart: always
-
-  dev-db:
-    container_name: dev-db
-    image: mariadb:10.5
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    ports:
-      - '3007:3309'
-    networks:
-      - backend-unab-sm
-    restart: always
-
-networks:
-  backend-unab-sm:
-    driver: bridge
