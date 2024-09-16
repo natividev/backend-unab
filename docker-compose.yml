@@ -9,7 +9,7 @@ services:
       MYSQL_USER: pedro_capo
       MYSQL_PASSWORD: password123
     volumes:
-      - data:/var/lib/mysql
+      - new_data:/var/lib/mysql
     ports:
       - '3307:3306'
     networks:
@@ -36,4 +36,4 @@ networks:
     driver: bridge
 
 volumes:
-  data:
+  new_data:
