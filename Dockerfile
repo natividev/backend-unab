@@ -39,7 +39,6 @@ RUN apt-get update && apt-get install -y openssl
 COPY --from=builder /usr/src/app/package*.json ./
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/prisma ./prisma
-COPY --from=builder /usr/src/app/public ./public
 
 # Definir argumentos de construcción
 ARG PORT
