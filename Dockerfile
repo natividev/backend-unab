@@ -14,8 +14,8 @@ COPY . .
 
 ARG PORT
 ARG DATABASE_URL
-ENV PORT=5000
-ENV DATABASE_URL="mysql://root:password123@31.220.97.169:3310/inventario_unab"
+ENV PORT=$PORT
+ENV DATABASE_URL=$DATABASE_URL
 
 # Ejecutar Prisma generate
 RUN npx prisma generate
@@ -39,8 +39,8 @@ COPY --from=builder /usr/src/app/prisma ./prisma
 
 ARG PORT
 ARG DATABASE_URL
-ENV PORT=5000
-ENV DATABASE_URL="mysql://root:password123@31.220.97.169:3310/inventario_unab"
+ENV PORT=$PORT
+ENV DATABASE_URL=$DATABASE_URL
 
 RUN npm ci --production
 
