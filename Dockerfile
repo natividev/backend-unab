@@ -14,8 +14,8 @@ COPY . .
 
 ARG PORT
 ARG DATABASE_URL
-ENV PORT=$PORT
-ENV DATABASE_URL=$DATABASE_URL
+ENV PORT=5000
+ENV DATABASE_URL="mysql://root:password123@31.220.97.169:3310/inventario_unab"
 
 # Ejecutar Prisma generate
 RUN npx prisma generate
@@ -27,7 +27,7 @@ RUN npm run build
 FROM node:18.16.0-slim
 
 # Instalar las dependencias necesarias para que funcione Prisma
-RUN apt update && apt install libssl-dev -y --no-install-recommends
+RUN apt-get update && apt-get install -y openssl
 
 # Establecer el directorio de trabajo
 WORKDIR /usr/src/app
@@ -39,8 +39,8 @@ COPY --from=builder /usr/src/app/prisma ./prisma
 
 ARG PORT
 ARG DATABASE_URL
-ENV PORT=$PORT
-ENV DATABASE_URL=$DATABASE_URL
+ENV PORT=5000
+ENV DATABASE_URL="mysql://root:password123@31.220.97.169:3310/inventario_unab"
 
 RUN npm ci --production
 
