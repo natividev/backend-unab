@@ -5,6 +5,7 @@ import { envs } from 'src/config/envs';
 
 async function bootstrap() {
   const logger = new Logger('Backend de UNAB');
+  logger.log(`🚀 Server running on port ${envs.PORT}`);
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({
@@ -22,7 +23,6 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
   });
-  logger.log(`🚀 Server running on port ${envs.PORT}`);
   app.setGlobalPrefix('api');
   await app.listen(envs.PORT);
 }
