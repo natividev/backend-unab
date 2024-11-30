@@ -1,48 +1,50 @@
-# Etapa de construcción
+# Etapa 1: Construcción
 FROM node:18.16.0-slim AS builder
 
-# Establecer el directorio de trabajo
+# Set working directory
 WORKDIR /usr/src/app
 
-# Copiar archivos de dependencias y prisma
+# Copy package.json and package-lock.json
 COPY package*.json ./
-COPY prisma ./prisma/
 
-# Instalar dependencias necesarias para la construcción
-RUN apt-get update && apt-get install -y \
-    python3 \
-    build-essential \
-    && npm ci \
-    && apt-get purge -y --auto-remove python3 build-essential \
-    && rm -rf /var/lib/apt/lists/*
+# Install dependencies (including development dependencies)
+RUN apt-get update && apt-get install -y openssl
+RUN npm install
 
-# Copiar el resto de los archivos
+# Copy the rest of the application code
 COPY . .
 
-# Ejecutar Prisma Generate y construir la aplicación
-RUN npx prisma generate && npm run build
+# Generate Prisma Client code
+RUN npx prisma generate
 
-# Etapa final
+# **Compila el código TypeScript para generar la carpeta dist**
+RUN npm run build
+
+# Etapa 2: Producción
 FROM node:18.16.0-slim
 
-# Instalar las dependencias necesarias para el desarrollo
-RUN apt-get update && apt-get install -y --no-install-recommends libssl-dev && \
-    rm -rf /var/lib/apt/lists/*
-
-# Establecer el directorio de trabajo
+# Set working directory
 WORKDIR /usr/src/app
 
-# Copiar los archivos necesarios desde la etapa de construcción
+# Copiar solo los archivos necesarios desde la etapa de construcción
 COPY --from=builder /usr/src/app/package*.json ./
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/prisma ./prisma
-COPY --from=builder /usr/src/app/tsconfig.json ./
 
-# Instalar dependencias de desarrollo
-RUN npm install
+# Instala solo las dependencias de producción
+RUN npm install --only=production
 
-# Exponer el puerto de la aplicación
-EXPOSE 3000
+# Set environment variables
+ARG PORT
+ARG DATABASE_URL
+ENV PORT=$PORT
+ENV DATABASE_URL=$DATABASE_URL
 
-# Comando para iniciar la aplicación en modo desarrollo
-CMD ["npm", "run", "start:dev"]
+# Run Prisma migrate
+RUN npx prisma migrate deploy
+
+# Expose the port
+EXPOSE $PORT
+
+# Command to run the app
+CMD ["node", "dist/main.js"]
