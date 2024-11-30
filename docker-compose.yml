@@ -9,8 +9,10 @@ services:
       dockerfile: Dockerfile.dev
     ports:
       - '5000:5000'
-    env_file:
-      - .env
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${{ secrets.DATABASE_URL }}
+      - PORT=${{ secrets.PORT }}
     volumes:
       - .:/usr/src/app
     restart: always
