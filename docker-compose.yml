@@ -6,13 +6,11 @@ services:
     image: backend-unab
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     ports:
       - '5000:5000'
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=${{ secrets.DATABASE_URL }}
-      - PORT=${{ secrets.PORT }}
+    # env_file:
+    #   - .env
     volumes:
       - .:/usr/src/app
     restart: always
