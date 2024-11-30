@@ -71,17 +71,12 @@ export class CreateInventarioDto {
   @IsInt()
   empleadoId?: number;
 
-  @ApiProperty({ description: 'ID del usuario', required: false })
-  @IsOptional()
-  @IsInt()
-  usuarioId?: number;
-
   @ApiProperty({
     description: 'Fecha de ingreso del equipo',
     default: new Date().toISOString(),
   })
   @IsDateString()
-  fechaIngresoEquipo: string;
+  fechaIngresoEquipo: string | Date;
 
   @ApiProperty({
     description: 'Fecha de asignación del equipo',
@@ -89,10 +84,9 @@ export class CreateInventarioDto {
   })
   @IsOptional()
   @IsDateString()
-  fechaAsignado?: string;
+  fechaAsignado?: string | null;
 
   @ApiProperty({ description: 'Fecha de descarte del equipo', required: false })
   @IsOptional()
-  @IsDateString()
-  fechaDescarte?: string;
+  fechaDescarte?: string | null;
 }

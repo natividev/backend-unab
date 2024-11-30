@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateInventarioDto } from '../dto/create-inventario.dto';
 import { UpdateInventarioDto } from '../dto/update-inventario.dto';
 import { PrismaService } from 'src/prisma.service';
+import * as moment from 'moment';
 
 @Injectable()
 export class InventarioService {
@@ -22,12 +23,11 @@ export class InventarioService {
     fechaDescarte,
     nivelId,
     sedeId,
-    usuarioId,
   }: CreateInventarioDto) {
     await this._prisma.tipos_equipos_inventario.create({
       data: {
         direccion_ip: direccionIp,
-        fecha_asignado: fechaAsignado,
+        fecha_asignado: new Date(moment(fechaAsignado).format('YYYY-MM-DD')),
         academico,
         administrativo,
         area: {
@@ -66,13 +66,12 @@ export class InventarioService {
           },
         },
         estado,
-        fecha_descarte: fechaDescarte,
-        usuario: {
-          connect: {
-            id: usuarioId,
-          },
-        },
-        fecha_ingreso_equipo: fechaIngresoEquipo,
+        fecha_descarte: fechaDescarte
+          ? new Date(moment(fechaDescarte).format('YYYY-MM-DD'))
+          : null,
+        fecha_ingreso_equipo: new Date(
+          moment(fechaIngresoEquipo).format('YYYY-MM-DD'),
+        ),
       },
     });
 
@@ -240,12 +239,7 @@ export class InventarioService {
           },
         },
         estado: updateInventarioDto.estado,
-        fecha_descarte: updateInventarioDto.fechaDescarte,
-        usuario: {
-          connect: {
-            id: updateInventarioDto.usuarioId,
-          },
-        },
+        fecha_descarte: updateInventarioDto.fechaDescarte ?? null,
         fecha_ingreso_equipo: updateInventarioDto.fechaIngresoEquipo,
       },
     });

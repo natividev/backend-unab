@@ -130,9 +130,9 @@ model tipos_equipos_inventario {
   academico            Boolean         @default(false)
   empleado_id          Int?
   usuario_id           Int?
-  fecha_ingreso_equipo DateTime        @default(now())
-  fecha_asignado       DateTime // el usuario pone la fecha de asignación null
-  fecha_descarte       DateTime? // el usuario pone la fecha de descarte null en el modulo de autorización se pondra la fecha
+  fecha_ingreso_equipo DateTime        @db.Date
+  fecha_asignado       DateTime        @db.Date
+  fecha_descarte       DateTime?       @db.Date
   created_at           DateTime        @default(now())
   updated_at           DateTime        @updatedAt
   empleado             empleados?      @relation(fields: [empleado_id], references: [id])
