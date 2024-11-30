@@ -1,16 +1,39 @@
 version: '3.8'
-
 services:
+  db:
+    container_name: db-sync-unab
+    image: mysql:8.0.39
+    environment:
+      MYSQL_ROOT_PASSWORD: root.123
+      MYSQL_DATABASE: inventario
+      MYSQL_USER: pedro_capo
+      MYSQL_PASSWORD: password123
+    volumes:
+      - new_data:/var/lib/mysql
+    ports:
+      - '3307:3306'
+    networks:
+      - backend_network
+
   app:
     container_name: backend-unab
     image: backend-unab
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        NODE_ENV: production
+        DATABASE_URL: ${DATABASE_URL}
+        PORT: ${PORT}
     ports:
-      - '5000:5000'
-    env_file:
-      - .env
-    volumes:
-      - .:/usr/src/app
+      - '${PORT}:${PORT}'
     restart: always
+    networks:
+      - backend_network
+
+networks:
+  backend_network:
+    driver: bridge
+
+volumes:
+  new_data:
